@@ -95,9 +95,9 @@ class SafeRAGBot:
             # Test API key
             try:
                 self.client.models.list()
-                st.success("✅ OpenAI API key validated")
+                st.success("OpenAI API key validated")
             except Exception as e:
-                st.error("❌ Invalid OpenAI API key")
+                st.error("Invalid OpenAI API key")
                 return False
             
             if LANGCHAIN_AVAILABLE:
@@ -114,9 +114,9 @@ class SafeRAGBot:
                         max_retries=3,
                         request_timeout=60
                     )
-                    st.success("✅ LangChain components initialized")
+                    st.success("LangChain components initialized")
                 except Exception as e:
-                    st.warning("⚠️ LangChain initialization issue, using fallback")
+                    st.warning("LangChain initialization issue, using fallback")
                     self._setup_fallback_mode()
             else:
                 self._setup_fallback_mode()
@@ -127,7 +127,7 @@ class SafeRAGBot:
     
     def _setup_fallback_mode(self):
         """Setup fallback mode without LangChain."""
-        st.info("🔄 Running in fallback mode (Direct OpenAI API)")
+        st.info("Running in fallback mode (Direct OpenAI API)")
         self.fallback_mode = True
         self.document_texts = []
         
@@ -149,7 +149,7 @@ class SafeRAGBot:
         except Exception:
             pass
         
-        # Method 2: pdfplumber (if available)
+    
         try:
             import pdfplumber
             with pdfplumber.open(file_path) as pdf:
@@ -162,7 +162,7 @@ class SafeRAGBot:
         except Exception:
             pass
         
-        # Method 3: Basic binary read (last resort)
+    
         try:
             with open(file_path, 'rb') as file:
                 content = file.read()
@@ -211,25 +211,25 @@ class SafeRAGBot:
                 if texts:
                     all_texts.extend(texts)
                     successful_files.append(filename)
-                    st.success(f"✅ Loaded: {filename}")
+                    st.success(f"Loaded: {filename}")
                 else:
-                    st.warning(f"⚠️ Could not extract text from: {filename}")
+                    st.warning(f"Could not extract text from: {filename}")
                     
             except Exception as e:
-                st.warning(f"⚠️ Skipped {Path(file_path).name}: {str(e)}")
+                st.warning(f"Skipped {Path(file_path).name}: {str(e)}")
         
         if all_texts:
             if hasattr(self, 'fallback_mode') and self.fallback_mode:
                 self.document_texts = all_texts
             else:
-                # Convert to LangChain documents
+            
                 from langchain.schema import Document
                 self.documents = [Document(page_content=text) for text in all_texts]
             
-            st.success(f"📚 Successfully loaded {len(successful_files)} files")
+            st.success(f"Successfully loaded {len(successful_files)} files")
             return True
         else:
-            st.error("❌ No documents could be loaded")
+            st.error("No documents could be loaded")
             return False
     
     def safe_split_text(self, text: str, chunk_size: int = 1000, chunk_overlap: int = 200) -> List[str]:
@@ -284,7 +284,7 @@ class SafeRAGBot:
                     st.progress((i + 1) / len(texts))
                     
             except Exception as e:
-                st.warning(f"⚠️ Skipped embedding for chunk {i+1}")
+                st.warning(f"Skipped embedding for chunk {i+1}")
                 # Use zero vector as fallback
                 embeddings.append([0.0] * 1536)
         
@@ -306,7 +306,7 @@ class SafeRAGBot:
             # Calculate score
             score = len(common_words) / max(len(query_words), 1)
             
-            # Bonus for exact phrase matches
+            # exact phrase matching
             if query_lower in text_lower:
                 score += 0.5
             
@@ -327,7 +327,7 @@ class SafeRAGBot:
                     all_chunks.extend(chunks)
                 
                 self.chunks = all_chunks
-                st.success(f"📄 Created {len(all_chunks)} text chunks")
+                st.success(f"Created {len(all_chunks)} text chunks")
                 return True
             
             elif LANGCHAIN_AVAILABLE and self.documents:
@@ -343,15 +343,15 @@ class SafeRAGBot:
                     self.chunks = chunks
                     
                     if FAISS_AVAILABLE and self.embeddings:
-                        with st.spinner("🔄 Creating vector database..."):
+                        with st.spinner("Creating vector database..."):
                             self.vectorstore = FAISS.from_documents(chunks, self.embeddings)
-                        st.success("✅ Vector database created!")
+                        st.success("Vector database created!")
                     
-                    st.success(f"📄 Created {len(chunks)} document chunks")
+                    st.success(f"Created {len(chunks)} document chunks")
                     return True
                     
                 except Exception as e:
-                    st.warning("⚠️ LangChain processing failed, using fallback")
+                    st.warning("LangChain processing failed, using fallback")
                     return self._fallback_processing(chunk_size, chunk_overlap)
             
             return False
@@ -370,7 +370,7 @@ class SafeRAGBot:
                 all_chunks.extend(chunks)
             
             self.chunks = all_chunks
-            st.success(f"📄 Fallback processing: {len(all_chunks)} chunks created")
+            st.success(f"Fallback processing: {len(all_chunks)} chunks created")
             return True
         except Exception:
             return False
@@ -432,7 +432,7 @@ class SafeRAGBot:
                 return_source_documents=True
             )
         except Exception as e:
-            st.warning("⚠️ QA chain creation failed")
+            st.warning("QA chain creation failed")
             self.qa_chain = None
     
     def _fallback_query(self, question: str) -> Dict[str, Any]:
@@ -504,7 +504,7 @@ class SafeRAGBot:
             )
             
             answer = response.choices[0].message.content
-            disclaimer = "\n\n⚠️ Note: This answer is based on general knowledge as I couldn't access your documents properly."
+            disclaimer = "\n\nNote: This answer is based on general knowledge as I couldn't access your documents properly."
             
             return {
                 "answer": answer + disclaimer,
@@ -523,14 +523,14 @@ def main():
     """Main application with comprehensive error handling."""
     try:
         st.set_page_config(
-            page_title="Error-Free Q&A RAG Bot",
+            page_title="Q&A RAG Bot",
             page_icon="🤖",
             layout="wide",
             initial_sidebar_state="expanded"
         )
         
-        st.title("🤖 Error-Free Custom Q&A Bot")
-        st.markdown("**Bulletproof RAG implementation - Guaranteed to work!**")
+        st.title("RAG Q&A Bot")
+        st.markdown("**Simple RAG implementation**")
         
         # Sidebar
         with st.sidebar:
@@ -544,18 +544,18 @@ def main():
             )
             
             if not api_key:
-                st.warning("⚠️ Please enter your OpenAI API key")
+                st.warning("Please enter your OpenAI API key")
                 st.info("Get your API key from: https://platform.openai.com/api-keys")
                 st.stop()
             
             st.markdown("---")
-            st.header("📄 Settings")
+            st.header("⚙️ Settings")
             chunk_size = st.slider("Chunk Size", 500, 2000, 1000, help="Size of text chunks")
             chunk_overlap = st.slider("Chunk Overlap", 50, 400, 200, help="Overlap between chunks")
         
         # Initialize bot
         if 'rag_bot' not in st.session_state:
-            with st.spinner("🚀 Initializing RAG Bot..."):
+            with st.spinner("Initializing RAG Bot..."):
                 st.session_state.rag_bot = SafeRAGBot(api_key)
         
         bot = st.session_state.rag_bot
@@ -564,7 +564,7 @@ def main():
         col1, col2 = st.columns([1, 1])
         
         with col1:
-            st.header("📁 Upload Documents")
+            st.header("Upload Documents")
             
             uploaded_files = st.file_uploader(
                 "Choose your files",
@@ -574,10 +574,10 @@ def main():
             )
             
             if uploaded_files:
-                st.info(f"📋 {len(uploaded_files)} files selected")
+                st.info(f"{len(uploaded_files)} files selected")
                 
-                if st.button("🚀 Process Documents", type="primary"):
-                    with st.spinner("📚 Processing documents..."):
+                if st.button("Process Documents", type="primary"):
+                    with st.spinner("Processing documents..."):
                         # Save files temporarily
                         temp_files = []
                         for uploaded_file in uploaded_files:
@@ -587,7 +587,7 @@ def main():
                                     tmp.write(uploaded_file.getvalue())
                                     temp_files.append(tmp.name)
                             except Exception as e:
-                                st.warning(f"⚠️ Issue with {uploaded_file.name}: {str(e)}")
+                                st.warning(f"Issue with {uploaded_file.name}: {str(e)}")
                         
                         # Process documents
                         if temp_files:
@@ -597,7 +597,7 @@ def main():
                                 if processing_success:
                                     st.session_state.docs_ready = True
                                     st.balloons()
-                                    st.success("🎉 Documents ready! Ask questions in the next column.")
+                                    st.success("Documents ready! Ask questions in the next column.")
                         
                         # Cleanup
                         for temp_file in temp_files:
@@ -624,9 +624,9 @@ def main():
                             result = bot.ask_question_safe(question)
                         
                         if "error" in result:
-                            st.error(f"❌ {result['error']}")
+                            st.error(f"{result['error']}")
                         else:
-                            st.success("✅ Answer:")
+                            st.success("Answer:")
                             st.write(result["answer"])
                             
                             # Show method used
@@ -635,7 +635,7 @@ def main():
                             
                             # Show sources if available
                             if result.get("sources"):
-                                with st.expander("📚 Source Context"):
+                                with st.expander("Source Context"):
                                     for i, source in enumerate(result["sources"][:3]):
                                         st.markdown(f"**Source {i+1}:**")
                                         source_text = source if isinstance(source, str) else str(source)
@@ -652,7 +652,7 @@ def main():
                                 "answer": result["answer"]
                             })
                     else:
-                        st.warning("⚠️ Please enter a question")
+                        st.warning("Please enter a question")
                 
                 # Chat history
                 if st.session_state.get('chat_history'):
@@ -664,12 +664,12 @@ def main():
                             st.markdown(f"**Answer:** {chat['answer']}")
                 
             else:
-                st.info("👈 Please upload and process documents first")
+                st.info("😒 Please upload and process documents first")
                 
                 # Quick test without documents
                 st.markdown("---")
-                st.subheader("🧪 Test without documents")
-                test_question = st.text_input("Ask a general question:", placeholder="What is artificial intelligence?")
+                st.subheader("Test without documents")
+                test_question = st.text_input("Ask me any general question:", placeholder="What is the difference between Machine Learning and Atificial Intelligence?")
                 
                 if st.button("🚀 Test Query") and test_question:
                     with st.spinner("Testing..."):
@@ -679,8 +679,8 @@ def main():
         # Footer
         st.markdown("---")
         st.markdown(
-            "🔧 **Error-Free Implementation** | Built with Streamlit + OpenAI | "
-            "Multiple fallback methods ensure 100% reliability"
+            "🔧 **Simple RAG Q&A bot Implementation** | Built with Streamlit + OpenAI | "
+            "Using multiple seamless fallback methods"
         )
         
         # System status
@@ -692,7 +692,7 @@ def main():
             st.write(f"**Chunks Created:** {len(getattr(bot, 'chunks', []))}")
     
     except Exception as e:
-        st.error(f"🚨 Critical Error: {str(e)}")
+        st.error(f"Critical Error: {str(e)}")
         st.error("Please refresh the page and try again.")
         st.code(traceback.format_exc())
 
