@@ -1,0 +1,60 @@
+Meeting Notes – Team Sync (July 18, 2025)
+
+Attendees:
+
+James (Product Manager)
+
+Clara (Engineering Lead)
+
+Mariam (UI/UX)
+
+Dele (QA)
+
+Isaac (Marketing)
+
+1. Product Development Updates
+
+Clara confirmed backend integration is complete.
+
+UI screens are 80% done; Mariam to finalize remaining screens by July 21.
+
+Notification module needs optimization – causing latency in user response.
+
+2. QA & Testing
+
+Dele noted 12 new bugs found in the pre-release version.
+
+Primary issues:
+
+Login timeout in poor network conditions.
+
+Inaccurate step count for NovaX Smartwatch.
+
+Fix deadline: July 24.
+
+3. Marketing Launch Plan
+
+Isaac shared the updated campaign schedule:
+
+Teaser: July 25 (social media, short video)
+
+Soft launch: Aug 1 (beta testers only)
+
+Full launch: Aug 15 (global)
+
+4. Documentation & Support
+
+James to oversee creation of FAQ page and onboarding slides.
+
+Helpdesk integration pending approval.
+
+5. Action Items
+
+Team Member	Task	Deadline
+Clara	Optimize notification API	July 22
+Mariam	Complete UI designs	July 21
+Dele	Re-test smartwatch functions	July 25
+Isaac	Launch teaser campaign	July 25
+James	Prepare FAQ docs	July 23
+
+Next Meeting: July 26, 2025, at 10:00 AM
