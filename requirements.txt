@@ -1,0 +1,17 @@
+# Essential dependencies - Auto-installed by the bot
+streamlit>=1.28.0
+openai>=1.0.0
+
+# Core RAG components (auto-installed with fallbacks)
+langchain>=0.1.0
+pypdf2>=3.0.0
+faiss-cpu>=1.7.4
+tiktoken>=0.5.0
+
+# Additional PDF processing (optional but recommended)
+pdfplumber>=0.9.0
+
+# Fallback packages for maximum compatibility
+PyPDF2>=3.0.0
+numpy>=1.21.0
+python-dotenv>=1.0.0
